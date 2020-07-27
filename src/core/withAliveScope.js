@@ -7,18 +7,6 @@ import { Acceptor } from './Bridge'
 import NodeKey from './NodeKey'
 import { AliveScopeConsumer, aliveScopeContext } from './context'
 
-function controllerCherryPick(controller) {
-  const {
-    drop,
-    dropScope,
-    refresh,
-    refreshScope,
-    clear,
-    getCachingNodes
-  } = controller
-  return { drop, dropScope, refresh, refreshScope, clear, getCachingNodes }
-}
-
 export const expandKeepAlive = KeepAlive => {
   const renderContent = ({ idPrefix, helpers, props }) => {
     const isOutsideAliveScope = isUndefined(helpers)
@@ -66,7 +54,7 @@ const withAliveScope = WrappedComponent => {
 
   const HookScope = ({ forwardedRef, ...props }) =>
     renderContent({
-      helpers: controllerCherryPick(useContext(aliveScopeContext) || {}),
+      helpers: useContext(aliveScopeContext) || {},
       props,
       forwardedRef
     })
@@ -75,7 +63,7 @@ const withAliveScope = WrappedComponent => {
     <AliveScopeConsumer>
       {(controller = {}) =>
         renderContent({
-          helpers: controllerCherryPick(controller),
+          helpers: controller,
           props,
           forwardedRef
         })
@@ -107,7 +95,7 @@ export const useAliveController = () => {
     return {}
   }
 
-  return controllerCherryPick(ctxValue)
+  return ctxValue
 }
 
 export default withAliveScope
