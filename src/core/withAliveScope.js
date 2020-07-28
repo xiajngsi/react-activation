@@ -8,19 +8,14 @@ import NodeKey from './NodeKey'
 import { AliveScopeConsumer, aliveScopeContext } from './context'
 
 export const expandKeepAlive = KeepAlive => {
-  const renderContent = ({ idPrefix, helpers, props }) => {
+  const renderContent = ({ idPrefix, helpers, needId, props }) => {
     const isOutsideAliveScope = isUndefined(helpers)
 
     if (isOutsideAliveScope) {
       console.error('You should not use <KeepAlive /> outside a <AliveScope>')
     }
-
-    return isOutsideAliveScope ? (
-      get(props, 'children', null)
-    ) : (
-      <NodeKey prefix={idPrefix} key={props._nk}>
-        {id => (
-          <Acceptor id={id}>
+    
+    const comp = (id) => <Acceptor id={id}>
             {bridgeProps => (
               <KeepAlive
                 key={id}
@@ -31,8 +26,15 @@ export const expandKeepAlive = KeepAlive => {
               />
             )}
           </Acceptor>
-        )}
-      </NodeKey>
+
+    return isOutsideAliveScope ? (
+      get(props, 'children', null)
+    ) : (
+      props._nk ? 
+      <NodeKey prefix={idPrefix} key={props._nk}>
+        {id => comp(id)}
+      </NodeKey> 
+      : comp(idPrefix)
     )
   }
   const HookExpand = ({ id: idPrefix, ...props }) =>

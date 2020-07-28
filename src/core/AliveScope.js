@@ -106,8 +106,11 @@ export default class AliveScope extends Component {
         }
 
         const canRefresh = type === HANDLE_TYPE_REFRESH && !get(cache, 'cached')
+        // const canDrop =
+        //   (type === HANDLE_TYPE_DROP && get(cache, 'cached')) ||
+        //   get(cache, 'willDrop')
         const canDrop =
-          (type === HANDLE_TYPE_DROP && get(cache, 'cached')) ||
+          (type === HANDLE_TYPE_DROP) ||
           get(cache, 'willDrop')
 
         if (canDrop) {
